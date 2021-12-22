@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+  setel_mongodb:
+    image: mongo
+    # environment:
+      #   MONGO_INITDB_ROOT_USERNAME: admin
+      #   MONGO_INITDB_ROOT_PASSWORD: 1234
+      # MONGO_INITDB_DATABASE: order
+    # volumes:
+
+    #   - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - 27017:27017
+    networks:
+      - setel-network
+  setel_order:
+    container_name: setel_order
+    build: ./setel-order
+    command: npm run start
+    ports:
+      - "8000:8000"
+    depends_on: 
+      - "setel_mongodb"
+    networks:
+      - setel-network
+  setel_payment:
+    container_name: setel_payment
+    build: ./setel-order
+    command: npm run start
+    ports:
+      - "4000:4000"
+    depends_on: 
+      - "setel_mongodb"
+    networks:
+      - setel-network
+  setel_client:
+    container_name: setel-client
+    build: ./setel-app
+    command: npm run start
+    ports:
+      - "3000:3000"
+    networks:
+      - setel-network
+networks:
+  setel-network:
